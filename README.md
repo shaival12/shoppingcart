@@ -1,2 +1,2 @@
 # shoppingcart
-Shopping cart implementation using H2 db
+Shopping cart implementation using H2 db, Spring boot JPA
