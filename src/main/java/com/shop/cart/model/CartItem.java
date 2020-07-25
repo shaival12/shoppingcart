@@ -13,7 +13,7 @@ import javax.persistence.*;
  */
 
 @Entity
-@Table(name = "cart_item", catalog = "shopping_cart_db")
+@Table(name = "cart_item")
 public class CartItem implements java.io.Serializable {
 
 	private Long idCartItem;
@@ -42,7 +42,7 @@ public class CartItem implements java.io.Serializable {
 
 	@Id
 	@GeneratedValue(strategy = IDENTITY)
-	@Column(name = "idcart_item", unique = true, nullable = false)
+	@Column(name = "idCartItem", unique = true, nullable = false)
 	public Long getIdCartItem() {
 		return this.idCartItem;
 	}

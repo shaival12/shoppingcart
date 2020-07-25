@@ -11,6 +11,6 @@ import com.shop.cart.model.CartItem;
  *
  */
 @Repository
-public interface CartItemRepository extends CrudRepository<CartItem, Integer>{
+public interface CartItemRepository extends CrudRepository<CartItem, Long>{
  
 }

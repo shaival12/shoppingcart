@@ -8,6 +8,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 /**
  * Entity for Product
@@ -16,6 +17,7 @@ import javax.persistence.Id;
  */
 
 @Entity
+@Table(name = "product")
 public class Product implements java.io.Serializable {
 
 	// @Id annotation specifies the primary key of an entity.
@@ -107,7 +109,7 @@ public class Product implements java.io.Serializable {
 		this.imgUrl = imgUrl;
 	}
 
-	@Column(name = "imgUrl", nullable = false, length = 100)
+	@Column(name = "in_stock", nullable = false, length = 100)
 	public boolean isInStock() {
 		return inStock;
 	}

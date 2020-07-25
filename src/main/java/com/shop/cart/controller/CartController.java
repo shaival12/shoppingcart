@@ -32,7 +32,7 @@ public class CartController {
 	 * @param quanitity
 	 */
 	@PostMapping("/shop/{productid}/{quantity}")
-    public void addCartItem(@PathVariable String productid, @PathVariable(required = false) Integer quanitity) {
+    public void addCartItem(@PathVariable String productid, @PathVariable(required = false) Integer quantity) {
 
 		//cartService.addCartItem(productid,quantity);
     }
@@ -44,7 +44,7 @@ public class CartController {
 	 * @param quanitity
 	 */
 	@DeleteMapping("/shop/{productid}/{quantity}")
-    public void removeCartItem(@PathVariable String productid, @PathVariable(required = false) Integer quanitity) {
+    public void removeCartItem(@PathVariable String productid, @PathVariable(required = false) Integer quantity) {
 		
       // cartService.removeCartItem(productid,quantity);
     }

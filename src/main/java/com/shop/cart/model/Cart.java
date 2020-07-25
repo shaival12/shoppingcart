@@ -29,7 +29,7 @@ public class Cart implements java.io.Serializable {
 	private BigDecimal total;
 	private String currency;
 	
-	@OneToMany(mappedBy = "cart_item")
+	@OneToMany(mappedBy = "idCartItem")
 	private List<CartItem> cartItems;
 
 	public Cart() {
