@@ -95,6 +95,71 @@ public class CartItem implements java.io.Serializable {
 	public void setCart(Cart cart) {
 		this.cart = cart;
 	}
+
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((cart == null) ? 0 : cart.hashCode());
+		result = prime * result + ((currency == null) ? 0 : currency.hashCode());
+		result = prime * result + ((idCartItem == null) ? 0 : idCartItem.hashCode());
+		result = prime * result + ((quantity == null) ? 0 : quantity.hashCode());
+		result = prime * result + ((sku == null) ? 0 : sku.hashCode());
+		result = prime * result + ((subTotal == null) ? 0 : subTotal.hashCode());
+		return result;
+	}
+
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		CartItem other = (CartItem) obj;
+		if (cart == null) {
+			if (other.cart != null)
+				return false;
+		} else if (!cart.equals(other.cart))
+			return false;
+		if (currency == null) {
+			if (other.currency != null)
+				return false;
+		} else if (!currency.equals(other.currency))
+			return false;
+		if (idCartItem == null) {
+			if (other.idCartItem != null)
+				return false;
+		} else if (!idCartItem.equals(other.idCartItem))
+			return false;
+		if (quantity == null) {
+			if (other.quantity != null)
+				return false;
+		} else if (!quantity.equals(other.quantity))
+			return false;
+		if (sku == null) {
+			if (other.sku != null)
+				return false;
+		} else if (!sku.equals(other.sku))
+			return false;
+		if (subTotal == null) {
+			if (other.subTotal != null)
+				return false;
+		} else if (!subTotal.equals(other.subTotal))
+			return false;
+		return true;
+	}
+
+
+	@Override
+	public String toString() {
+		return "CartItem [idCartItem=" + idCartItem + ", sku=" + sku + ", quantity=" + quantity + ", currency="
+				+ currency + ", subTotal=" + subTotal + ", cart=" + cart + "]";
+	}
+	
 	
 	
 

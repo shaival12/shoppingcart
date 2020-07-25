@@ -107,4 +107,68 @@ public class Cart implements java.io.Serializable {
 		}
 		return total;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((cartItems == null) ? 0 : cartItems.hashCode());
+		result = prime * result + ((currency == null) ? 0 : currency.hashCode());
+		result = prime * result + ((idCart == null) ? 0 : idCart.hashCode());
+		result = prime * result + ((postAndTax == null) ? 0 : postAndTax.hashCode());
+		result = prime * result + ((subtotal == null) ? 0 : subtotal.hashCode());
+		result = prime * result + ((total == null) ? 0 : total.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Cart other = (Cart) obj;
+		if (cartItems == null) {
+			if (other.cartItems != null)
+				return false;
+		} else if (!cartItems.equals(other.cartItems))
+			return false;
+		if (currency == null) {
+			if (other.currency != null)
+				return false;
+		} else if (!currency.equals(other.currency))
+			return false;
+		if (idCart == null) {
+			if (other.idCart != null)
+				return false;
+		} else if (!idCart.equals(other.idCart))
+			return false;
+		if (postAndTax == null) {
+			if (other.postAndTax != null)
+				return false;
+		} else if (!postAndTax.equals(other.postAndTax))
+			return false;
+		if (subtotal == null) {
+			if (other.subtotal != null)
+				return false;
+		} else if (!subtotal.equals(other.subtotal))
+			return false;
+		if (total == null) {
+			if (other.total != null)
+				return false;
+		} else if (!total.equals(other.total))
+			return false;
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "Cart [idCart=" + idCart + ", postAndTax=" + postAndTax + ", subtotal=" + subtotal + ", total=" + total
+				+ ", currency=" + currency + ", cartItems=" + cartItems + "]";
+	}
+	
+	
+	
 }

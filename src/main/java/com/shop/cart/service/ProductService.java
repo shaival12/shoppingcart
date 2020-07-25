@@ -1,6 +1,7 @@
 package com.shop.cart.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -8,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.shop.cart.repo.ProductRepository;
 import com.shop.cart.exception.ProductNotFoundException;
+import com.shop.cart.model.Cart;
 import com.shop.cart.model.Product;
 
 /**
@@ -30,5 +32,10 @@ public class ProductService {
 		else
 			return products;
 	}
+	
+	public Optional<Product> findById(Long id) {
+		return productDao.findById(id);
+	}
+	
 
 }

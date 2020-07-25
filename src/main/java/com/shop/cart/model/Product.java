@@ -48,10 +48,6 @@ public class Product implements java.io.Serializable {
 	}
 
 
-
-
-
-
 	@Id
 	@GeneratedValue(strategy = IDENTITY)
 	@Column(name = "idproduct", unique = true, nullable = false)
@@ -118,7 +114,70 @@ public class Product implements java.io.Serializable {
 		this.inStock = inStock;
 	}
 
-	
-	
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((description == null) ? 0 : description.hashCode());
+		result = prime * result + ((idProduct == null) ? 0 : idProduct.hashCode());
+		result = prime * result + ((imgUrl == null) ? 0 : imgUrl.hashCode());
+		result = prime * result + (inStock ? 1231 : 1237);
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((price == null) ? 0 : price.hashCode());
+		result = prime * result + ((sku == null) ? 0 : sku.hashCode());
+		return result;
+	}
+
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Product other = (Product) obj;
+		if (description == null) {
+			if (other.description != null)
+				return false;
+		} else if (!description.equals(other.description))
+			return false;
+		if (idProduct == null) {
+			if (other.idProduct != null)
+				return false;
+		} else if (!idProduct.equals(other.idProduct))
+			return false;
+		if (imgUrl == null) {
+			if (other.imgUrl != null)
+				return false;
+		} else if (!imgUrl.equals(other.imgUrl))
+			return false;
+		if (inStock != other.inStock)
+			return false;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		if (price == null) {
+			if (other.price != null)
+				return false;
+		} else if (!price.equals(other.price))
+			return false;
+		if (sku == null) {
+			if (other.sku != null)
+				return false;
+		} else if (!sku.equals(other.sku))
+			return false;
+		return true;
+	}
+
+
+	@Override
+	public String toString() {
+		return "Product [idProduct=" + idProduct + ", sku=" + sku + ", name=" + name + ", description=" + description
+				+ ", imgUrl=" + imgUrl + ", price=" + price + ", inStock=" + inStock + "]";
+	}
 }

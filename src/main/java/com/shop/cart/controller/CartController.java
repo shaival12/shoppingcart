@@ -7,7 +7,10 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -16,9 +19,12 @@ import com.shop.cart.model.Cart;
 import com.shop.cart.model.Product;
 import com.shop.cart.service.CartService;
 import com.shop.cart.service.ProductService;
+ 
 
 @RestController
 public class CartController {
+
+	
 
 	@Autowired
 	CartService cartService;
@@ -31,22 +37,47 @@ public class CartController {
 	 * @param productid
 	 * @param quanitity
 	 */
-	@PostMapping("/shop/{productid}/{quantity}")
-    public void addCartItem(@PathVariable String productid, @PathVariable(required = false) Integer quantity) {
-
-		//cartService.addCartItem(productid,quantity);
-    }
-	
+	@PostMapping("/shop/{cartid}/{productid}/{quantity}")
+    public @ResponseBody ResponseEntity<Cart> addCartItem(@PathVariable Long cartId,
+    		         @PathVariable Long productid, 
+    		         @PathVariable(required = false) Integer quantity) {
+		
+		if(quantity==null) {
+			quantity = 1;
+		}
+		
+		
+		Cart cart = null;
+		if(cartService.findById(cartId).isPresent()) {
+			 cart = cartService.findById(cartId).get();  // find existing cart
+		}else {
+			 cart =  cartService.instantiateEmptyCart(); //create a new Cart
+		}
+		
+		// add Product to Cart
+		Product product = productService.findById(productid).get(); 
+		cart = cartService.addCartItem(quantity, cart, product);
+		
+		return new ResponseEntity<Cart> (cart, HttpStatus.OK);
+    }	
 	
 	/**
 	 * delete a cartItem to cart with productid and quantity(optional)
 	 * @param productid
 	 * @param quanitity
 	 */
-	@DeleteMapping("/shop/{productid}/{quantity}")
-    public void removeCartItem(@PathVariable String productid, @PathVariable(required = false) Integer quantity) {
+	@DeleteMapping("/shop/{cartid}/{productid}/{quantity}")
+    public @ResponseBody ResponseEntity<Cart> removeCartItem(@PathVariable Long cartId,
+	              @PathVariable Long productid, 
+	              @PathVariable(required = false) Integer quantity) {
 		
-      // cartService.removeCartItem(productid,quantity);
+		Cart cart = cartService.findById(cartId).get();
+		if(cart != null) {
+			Product product = productService.findById(productid).get();
+			cart = cartService.removeCartItem(quantity, cart, product);
+		}
+		
+		return new ResponseEntity<Cart> (cart, HttpStatus.OK);
     }
 	
 	/**
@@ -56,13 +87,15 @@ public class CartController {
 	 * @return
 	 * @throws URISyntaxException
 	 */
-	@GetMapping("/shop/cart")
-	public @ResponseBody ResponseEntity<Cart> viewCart() {
+	@GetMapping("/shop/cart/{id}")
+	public @ResponseBody ResponseEntity<Cart> viewCart(@PathVariable Long id) {
 		
-		Cart cart = null;
-		//TODO
-		//cart = cartService.viewCart();
+		Boolean isPresent = cartService.findById(id).isPresent();
+		if(!isPresent) {
+			return new ResponseEntity(HttpStatus.NOT_FOUND);
+		}
 		
+		Cart cart = cartService.findById(id).get();		
 		return new ResponseEntity<Cart> (cart, HttpStatus.OK);
 	}
 
@@ -78,9 +111,6 @@ public class CartController {
 		List<Product> products = productService.findAll();
 		return new ResponseEntity<List<Product>> (products, HttpStatus.OK);
 	}
-	
-	
-	
 	
 	
 }

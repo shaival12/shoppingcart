@@ -3,13 +3,13 @@ package com.shop.cart;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import com.shop.cart.repo.ProductRepository;
+import com.shop.cart.repo.*;
 
 import java.math.BigDecimal;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
-import com.shop.cart.model.Product;
+import com.shop.cart.model.*;
 import java.util.List;
 
 /**
@@ -23,6 +23,9 @@ public class CartApplication implements CommandLineRunner {
 	
 	@Autowired
 	private ProductRepository productRepository;
+	
+	@Autowired
+	private CartRepository cartRepository;
 
 	public static void main(String[] args) {
 		SpringApplication.run(CartApplication.class, args);
@@ -53,6 +56,12 @@ public class CartApplication implements CommandLineRunner {
 	  //Get the list of products from DB
 	  List<Product> productList = (List<Product>) productRepository.findAll();
 	  productList.forEach(e->  System.out.println(e.getName()));
+	  
+	  //add a default Cart
+	  Cart cart = new Cart(new BigDecimal("0.0"),new BigDecimal("0.0"),"EUR", null);
+	  cartRepository.save(cart);
+	  //Test a cart
+	  cartRepository.findAll().forEach(e->  System.out.println(e.getCurrency()));
 	  
 	}
 
