@@ -22,20 +22,31 @@ public class CartController {
 
 	@Autowired
 	CartService cartService;
+	
 	@Autowired
 	ProductService productService;
 	
+	/**
+	 * Add cartItem to cart with productid and quantity(optional)
+	 * @param productid
+	 * @param quanitity
+	 */
 	@PostMapping("/shop/{productid}/{quantity}")
-    public void addCartItem(@PathVariable String productid, @PathVariable Integer quanitity) {
+    public void addCartItem(@PathVariable String productid, @PathVariable(required = false) Integer quanitity) {
 
-		//cartService.addCartItem(productid,quanitity);
+		//cartService.addCartItem(productid,quantity);
     }
 	
 	
+	/**
+	 * delete a cartItem to cart with productid and quantity(optional)
+	 * @param productid
+	 * @param quanitity
+	 */
 	@DeleteMapping("/shop/{productid}/{quantity}")
-    public void removeCartItem(@PathVariable String productid, @PathVariable Integer quanitity) {
+    public void removeCartItem(@PathVariable String productid, @PathVariable(required = false) Integer quanitity) {
 		
-      // cartService.removeCartItem(productid,quanitity);
+      // cartService.removeCartItem(productid,quantity);
     }
 	
 	/**

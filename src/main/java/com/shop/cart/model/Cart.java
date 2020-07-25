@@ -18,7 +18,7 @@ import javax.persistence.Table;
  *
  */
 @Entity
-@Table(name = "cart", catalog = "shopping_cart_db")
+@Table(name = "cart")
 public class Cart implements java.io.Serializable {
 
 	@Id
