@@ -1,0 +1,31 @@
+DROP TABLE IF EXISTS product;
+DROP TABLE IF EXISTS cart_item;
+DROP TABLE IF EXISTS cart;
+ 
+CREATE TABLE product(
+  id INT AUTO_INCREMENT  PRIMARY KEY,
+  sku VARCHAR(250) NOT NULL,
+  name VARCHAR(250) NOT NULL,
+  description VARCHAR(250) DEFAULT NULL,
+  img_url VARCHAR(100) DEFAULT NULL,
+  price DECIMAL(10000,2),
+  in_stock BOOLEAN default true
+);
+
+CREATE TABLE cart_item(
+  id INT AUTO_INCREMENT  PRIMARY KEY,
+  sku VARCHAR(250) NOT NULL,
+  quantity int NOT NULL,
+  currency VARCHAR(3) DEFAULT NULL,
+  subtotal DECIMAL(10000,2)
+);
+
+CREATE TABLE cart(
+  id INT AUTO_INCREMENT  PRIMARY KEY,
+  currency VARCHAR(3) DEFAULT NULL,
+  subtotal DECIMAL(10000,2) ,
+  total DECIMAL(10000,2) ,
+  postAndTax DECIMAL(10000,2)
+);
+
+
