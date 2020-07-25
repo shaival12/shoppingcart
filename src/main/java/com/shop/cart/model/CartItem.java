@@ -6,6 +6,8 @@ import java.math.BigDecimal;
 
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * Entity for cart Item
  * @author shaival
@@ -58,7 +60,9 @@ public class CartItem implements java.io.Serializable {
 
 	public void setQuantity(Integer quantity) {
 		this.quantity = quantity;
-	}
+		
+	}	
+
 
 	public String getSku() {
 		return sku;
@@ -86,7 +90,7 @@ public class CartItem implements java.io.Serializable {
 		this.subTotal = subTotal;
 	}
 
-	
+	@JsonIgnore
 	public Cart getCart() {
 		return cart;
 	}

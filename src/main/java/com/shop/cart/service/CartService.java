@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.shop.cart.repo.CartRepository;
+import com.shop.cart.repo.CartItemRepository;
 import com.shop.cart.model.*;
 
 
@@ -20,6 +21,9 @@ public class CartService {
 
 	@Autowired
 	CartRepository cartDao;
+	
+	@Autowired
+	CartItemRepository cartItemDao;
 	
 	private static final String EUR_CURRENCY = "EUR";
 	
@@ -41,19 +45,19 @@ public class CartService {
 	 * @return
 	 */
 	public Cart addCartItem(Integer quantity, Cart cart, Product product) {
+		
 		if(cart.getCartItems()== null) { // if cart Empty and adding first Product
 			cart.setCartItems(new ArrayList<CartItem>());
 			addNewProductToCart(quantity, cart, product);
 			
 		}else { //if cartItems already exists
-		    cart.getCartItems().add(new CartItem());
-		
 		    CartItem existingCartItem = checkIfProductAlreadyExistsIntheCart(cart, product);
 		    
 		    //update the existing Quantity in the CartItem 
 		    if(existingCartItem!=null) {
 		    	//update quantity
 		    	existingCartItem.setQuantity(existingCartItem.getQuantity()+quantity);
+		    	existingCartItem.setSubTotal(calculateSubTotal(existingCartItem.getQuantity(), product));
 		    }else {
 		    	addNewProductToCart(quantity, cart, product);
 		    }
@@ -64,8 +68,11 @@ public class CartService {
 
 
 	private CartItem checkIfProductAlreadyExistsIntheCart(Cart cart, Product product) {
+		if(cart.getCartItems().size()==0) {
+			return null;
+		}
 		CartItem existingCartItem = cart.getCartItems().stream()
-				            .filter(e -> e.getSku().equals(product.getSku()))
+				            .filter(e -> product.getSku().equals( e.getSku()))
 				            .findFirst()
 				            .orElse(null);
 		return existingCartItem;
@@ -74,10 +81,13 @@ public class CartService {
 
 	private void addNewProductToCart(Integer quantity, Cart cart, Product product) {
 		
-		cart.getCartItems().add(new CartItem(product.getSku(),
+		CartItem entity = new CartItem(product.getSku(),
 				quantity,
 				EUR_CURRENCY,
-				calculateSubTotal(quantity, product)));
+				calculateSubTotal(quantity, product));
+		
+		cartItemDao.save(entity);
+		cart.getCartItems().add(entity);
 	}
 
 
@@ -104,13 +114,16 @@ public class CartService {
 		    if(existingCartItem!=null && existingCartItem.getQuantity()>=quantity) {
 		    	//update quantity
 		    	 existingCartItem.setQuantity(existingCartItem.getQuantity()-quantity);
-		    	
-		    	 if(existingCartItem.getQuantity()==0) {
-		    		// remove from Cart
-		    		 existingCartItem = null;
-		    	 }
+		    	 existingCartItem.setSubTotal(calculateSubTotal(existingCartItem.getQuantity(), product));
 		    	 
 		    }
+		    
+		    // if quantity 0, remove from list
+		    if(existingCartItem.getQuantity()==0) {
+	    		// remove from Cart
+		    	cart.getCartItems().removeIf(e -> product.getSku().equals(e.getSku()));
+	    	 }
+		    
 		}
 		
 		return cart;

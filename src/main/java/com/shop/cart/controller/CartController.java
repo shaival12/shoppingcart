@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.shop.cart.exception.ProductNotFoundException;
 import com.shop.cart.model.Cart;
@@ -22,9 +23,8 @@ import com.shop.cart.service.ProductService;
  
 
 @RestController
+@RequestMapping("/api")
 public class CartController {
-
-	
 
 	@Autowired
 	CartService cartService;
@@ -38,7 +38,7 @@ public class CartController {
 	 * @param quanitity
 	 */
 	@PostMapping("/shop/{cartid}/{productid}/{quantity}")
-    public @ResponseBody ResponseEntity<Cart> addCartItem(@PathVariable Long cartId,
+    public @ResponseBody ResponseEntity<Cart> addCartItem(@PathVariable Long cartid,
     		         @PathVariable Long productid, 
     		         @PathVariable(required = false) Integer quantity) {
 		
@@ -48,8 +48,8 @@ public class CartController {
 		
 		
 		Cart cart = null;
-		if(cartService.findById(cartId).isPresent()) {
-			 cart = cartService.findById(cartId).get();  // find existing cart
+		if(cartService.findById(cartid).isPresent()) {
+			 cart = cartService.findById(cartid).get();  // find existing cart
 		}else {
 			 cart =  cartService.instantiateEmptyCart(); //create a new Cart
 		}
@@ -67,11 +67,11 @@ public class CartController {
 	 * @param quanitity
 	 */
 	@DeleteMapping("/shop/{cartid}/{productid}/{quantity}")
-    public @ResponseBody ResponseEntity<Cart> removeCartItem(@PathVariable Long cartId,
+    public @ResponseBody ResponseEntity<Cart> removeCartItem(@PathVariable Long cartid,
 	              @PathVariable Long productid, 
 	              @PathVariable(required = false) Integer quantity) {
 		
-		Cart cart = cartService.findById(cartId).get();
+		Cart cart = cartService.findById(cartid).get();
 		if(cart != null) {
 			Product product = productService.findById(productid).get();
 			cart = cartService.removeCartItem(quantity, cart, product);
