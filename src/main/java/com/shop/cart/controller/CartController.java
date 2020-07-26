@@ -59,6 +59,12 @@ public class CartController {
 		
 		// add Product to Cart
 		Product product = productService.findById(productid).get(); 
+		
+		//if product is not in stock return with error 
+		if(!product.isInStock()) {
+			return new ResponseEntity(HttpStatus.BAD_REQUEST);
+		}
+		
 		cart = cartService.addCartItem(quantity, cart, product);
 		
 		return new ResponseEntity<Cart> (cart, HttpStatus.OK);
