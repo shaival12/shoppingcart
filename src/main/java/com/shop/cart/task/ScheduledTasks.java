@@ -33,7 +33,7 @@ public class ScheduledTasks {
         logger.info("Update the currency :: Execution Time - {}", dateTimeFormatter.format(LocalDateTime.now()) );
        
         //code to request latest quote from Exchange and update
-        ExchangeUtil.getCurrentRate();
+        ExchangeUtil.getCurrentRate("GBP");
         
     }
 
