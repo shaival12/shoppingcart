@@ -6,6 +6,12 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import com.shop.cart.repo.*;
 
 import java.math.BigDecimal;
+import org.springframework.context.annotation.Bean;
+
+import springfox.documentation.builders.RequestHandlerSelectors;
+import springfox.documentation.spi.DocumentationType;
+import springfox.documentation.spring.web.plugins.Docket;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -19,6 +25,7 @@ import java.util.List;
  */
 @SpringBootApplication
 @EnableScheduling
+@EnableSwagger2
 public class CartApplication implements CommandLineRunner {
 	
 	@Autowired
@@ -30,6 +37,12 @@ public class CartApplication implements CommandLineRunner {
 	public static void main(String[] args) {
 		SpringApplication.run(CartApplication.class, args);
 	}
+	
+	@Bean
+	   public Docket productApi() {
+	      return new Docket(DocumentationType.SWAGGER_2).select()
+	         .apis(RequestHandlerSelectors.basePackage("com.shop.cart")).build();
+	   }
 	
 	/**
 	 * Preload Product data in the database

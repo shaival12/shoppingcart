@@ -47,7 +47,7 @@ public class CartController {
 			return new ResponseEntity(HttpStatus.BAD_REQUEST);
 		}
 		if(quantity==null) {
-			quantity = 1;
+			quantity = 1; //default
 		}
 		
 		Cart cart = null;
