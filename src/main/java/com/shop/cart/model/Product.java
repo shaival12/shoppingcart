@@ -29,7 +29,7 @@ public class Product implements java.io.Serializable {
 	private String name;
 	private String description;
 	private String imgUrl;
-	private BigDecimal price;
+	private BigDecimal price; //GBP need to convert to EUR in Cart.
 	private boolean inStock;
 	
 	public Product() {

@@ -2,16 +2,17 @@ package com.shop.cart.service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.shop.cart.repo.CartRepository;
+import com.shop.cart.model.Cart;
+import com.shop.cart.model.CartItem;
+import com.shop.cart.model.Product;
 import com.shop.cart.repo.CartItemRepository;
-import com.shop.cart.model.*;
+import com.shop.cart.repo.CartRepository;
 
 
 
@@ -57,11 +58,15 @@ public class CartService {
 		    if(existingCartItem!=null) {
 		    	//update quantity
 		    	existingCartItem.setQuantity(existingCartItem.getQuantity()+quantity);
-		    	existingCartItem.setSubTotal(calculateSubTotal(existingCartItem.getQuantity(), product));
+		    	existingCartItem.setSubTotal(calculateCartItemSubTotal(existingCartItem.getQuantity(), product));
 		    }else {
 		    	addNewProductToCart(quantity, cart, product);
 		    }
 		}
+		
+		//do calculation of Total,SubTotal,PostAndTax
+		cart.reCalculateCart();
+		save(cart);
 		
 		return cart;
 	}
@@ -84,21 +89,21 @@ public class CartService {
 		CartItem entity = new CartItem(product.getSku(),
 				quantity,
 				EUR_CURRENCY,
-				calculateSubTotal(quantity, product));
-		
+				calculateCartItemSubTotal(quantity, product));
+		// save to db
 		cartItemDao.save(entity);
 		cart.getCartItems().add(entity);
 	}
 
 
-	private BigDecimal calculateSubTotal(Integer quantity, Product product) {
+	private BigDecimal calculateCartItemSubTotal(Integer quantity, Product product) {
 		BigDecimal subtotal = BigDecimal.ZERO;
 		return subtotal.add(product.getPrice().multiply(new BigDecimal(quantity)));
 	}
 	
 	
 	/**
-	 * remove Cart Item
+	 * remove Cart Item 
 	 * @param quantity
 	 * @param cart
 	 * @param product
@@ -114,7 +119,7 @@ public class CartService {
 		    if(existingCartItem!=null && existingCartItem.getQuantity()>=quantity) {
 		    	//update quantity
 		    	 existingCartItem.setQuantity(existingCartItem.getQuantity()-quantity);
-		    	 existingCartItem.setSubTotal(calculateSubTotal(existingCartItem.getQuantity(), product));
+		    	 existingCartItem.setSubTotal(calculateCartItemSubTotal(existingCartItem.getQuantity(), product));
 		    	 
 		    }
 		    
@@ -123,6 +128,10 @@ public class CartService {
 	    		// remove from Cart
 		    	cart.getCartItems().removeIf(e -> product.getSku().equals(e.getSku()));
 	    	 }
+		    
+		    //do calculation of Total,SubTotal,PostAndTax for Cart
+			cart.reCalculateCart();
+		    save(cart);
 		    
 		}
 		

@@ -65,6 +65,13 @@ public class Cart implements java.io.Serializable {
 	}
 
 
+	public BigDecimal getPostAndTax() {
+		return postAndTax;
+	}
+
+	public void setPostAndTax(BigDecimal postAndTax) {
+		this.postAndTax = postAndTax;
+	}
 
 	public void setTotal(BigDecimal total) {
 		this.total = total;
@@ -85,7 +92,7 @@ public class Cart implements java.io.Serializable {
 	
 	@Column(name = "subtotal", nullable = false, precision = 10)
 	public BigDecimal getSubtotal() {
-		return this.subtotal;
+		return subtotal;
 	}
 
 	public void setSubtotal(BigDecimal subtotal) {
@@ -100,13 +107,54 @@ public class Cart implements java.io.Serializable {
 		this.cartItems = cartItems;
 	}
 	
-	public BigDecimal calculateTotal(){
-		BigDecimal total = BigDecimal.ZERO;
-		for (CartItem cartItem : this.getCartItems()) {
-			total.add(cartItem.getSubTotal().multiply(new BigDecimal(cartItem.getQuantity())));		
-		}
+	
+	/**
+	 *  Do all fresh Calcualtion when quantity changes or New CartItem added
+	 */
+	public void reCalculateCart() {
+		calculateSubTotal();
+		calculatePostAndTax();
+		calculateTotal();
+	}
+	
+	/**
+	 * Sum of SubTotal + PostAndTax
+	 * @return
+	 */
+	private BigDecimal calculateTotal(){
+		 BigDecimal total = getSubtotal().add(getPostAndTax());
+		 setTotal(total);
 		return total;
 	}
+	
+	/**
+	 * Sum of subtotal of all CartItems 
+	 * @return
+	 */
+	private BigDecimal calculateSubTotal(){
+		
+		BigDecimal subTotal = this.getCartItems()
+				 .stream()
+			     .map(CartItem::getSubTotal)
+			     .reduce(BigDecimal.ZERO, BigDecimal::add);
+		
+		setSubtotal(subTotal);
+		return subTotal;
+	}
+	
+	/**
+	 * 10% of SubTotal
+	 * @return
+	 */
+	private BigDecimal calculatePostAndTax(){
+		BigDecimal postAndTax = (getSubtotal()
+				.multiply(new BigDecimal(10))
+				.divide(new BigDecimal(100)));		
+		setPostAndTax(postAndTax);
+		return postAndTax;
+	}
+	
+	
 
 	@Override
 	public int hashCode() {
