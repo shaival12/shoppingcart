@@ -50,6 +50,19 @@ public class CartController {
 			quantity = 1; //default
 		}
 		
+       // add Product to Cart
+		Product product = productService.findById(productid).get(); 
+		
+		//if product is not in stock return with error 
+		if(product==null) {
+			return new ResponseEntity(HttpStatus.BAD_REQUEST);
+		}
+		if(product!=null && !product.isInStock()) {
+			return new ResponseEntity(HttpStatus.BAD_REQUEST);
+		}
+				
+				
+		
 		Cart cart = null;
 		if(cartService.findById(cartid).isPresent()) {
 			 cart = cartService.findById(cartid).get();  // find existing cart
@@ -57,13 +70,6 @@ public class CartController {
 			 cart =  cartService.instantiateEmptyCart(); //create a new Cart
 		}
 		
-		// add Product to Cart
-		Product product = productService.findById(productid).get(); 
-		
-		//if product is not in stock return with error 
-		if(!product.isInStock()) {
-			return new ResponseEntity(HttpStatus.BAD_REQUEST);
-		}
 		
 		cart = cartService.addCartItem(quantity, cart, product);
 		
