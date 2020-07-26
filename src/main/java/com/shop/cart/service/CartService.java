@@ -1,7 +1,8 @@
 package com.shop.cart.service;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,13 +28,14 @@ public class CartService {
 	CartItemRepository cartItemDao;
 	
 	private static final String EUR_CURRENCY = "EUR";
+	private static final String GBP_CURRENCY = "GBP";
 	
 	/**
 	 * create a new Empty Cart 
 	 * @return
 	 */
 	public Cart instantiateEmptyCart() {
-		Cart cart = new Cart(new BigDecimal("0.0"),new BigDecimal("0.0"),EUR_CURRENCY, new ArrayList());
+		Cart cart = new Cart(new BigDecimal("0.0"),new BigDecimal("0.0"),EUR_CURRENCY, new HashSet());
 		cartDao.save(cart);// save to DB
 		return cart;
 	}
@@ -48,7 +50,7 @@ public class CartService {
 	public Cart addCartItem(Integer quantity, Cart cart, Product product) {
 		
 		if(cart.getCartItems()== null) { // if cart Empty and adding first Product
-			cart.setCartItems(new ArrayList<CartItem>());
+			cart.setCartItems(new HashSet<CartItem>());
 			addNewProductToCart(quantity, cart, product);
 			
 		}else { //if cartItems already exists
@@ -86,10 +88,11 @@ public class CartService {
 
 	private void addNewProductToCart(Integer quantity, Cart cart, Product product) {
 		
-		CartItem entity = new CartItem(product.getSku(),cart,
+		CartItem entity = new CartItem(cart.getIdCart(),product.getSku(),
 				quantity,
-				EUR_CURRENCY,
+				GBP_CURRENCY,
 				calculateCartItemSubTotal(quantity, product));
+		//entity.setCart(cart);
 		// save to db
 		cartItemDao.save(entity);
 		cart.getCartItems().add(entity);
@@ -124,7 +127,7 @@ public class CartService {
 		    }
 		    
 		    // if quantity 0, remove from list
-		    if(existingCartItem.getQuantity()==0) {
+		    if(existingCartItem!=null && existingCartItem.getQuantity()==0) {
 	    		// remove from Cart
 		    	cart.getCartItems().removeIf(e -> product.getSku().equals(e.getSku()));
 	    	 }
@@ -138,6 +141,18 @@ public class CartService {
 		return cart;
 		
   }
+	
+	/**
+	 * To be called from scheduled Task, update all cart Total with latest rate
+	 * @param gbpRate
+	 */
+	public void updateCarts() {
+		
+		findAll().stream().forEach(cart -> {
+			cart.reCalculateCart();
+			save(cart);
+		});
+	}
 	
 	/**
 	 * find a cart by id
@@ -159,6 +174,15 @@ public class CartService {
 		}
 		
 	  }
+	
+	/**
+	 * find all carts in DB 
+	 * @return
+	 */
+	public List<Cart> findAll()  {
+		List<Cart> carts = (List<Cart>) cartDao.findAll();
+		return carts;
+	}
 	
 
 }

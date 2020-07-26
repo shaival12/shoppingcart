@@ -3,14 +3,19 @@ package com.shop.cart.model;
 import static javax.persistence.GenerationType.IDENTITY;
 
 import java.math.BigDecimal;
-import java.util.List;
+import java.math.MathContext;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import com.shop.cart.task.ExchangeUtil;
 
 /**
  * Entity for Cart
@@ -29,13 +34,14 @@ public class Cart implements java.io.Serializable {
 	private BigDecimal total;
 	private String currency;
 	
-	@OneToMany(mappedBy = "idCartItem")
-	private List<CartItem> cartItems;
+	@OneToMany(mappedBy = "cart", fetch = FetchType.LAZY,
+			cascade = CascadeType.ALL)
+	private Set<CartItem> cartItems;
 
 	public Cart() {
 	}
 
-	public Cart(BigDecimal subtotal, BigDecimal total, String currency, List<CartItem> cartItems) {
+	public Cart(BigDecimal subtotal, BigDecimal total, String currency, Set<CartItem> cartItems) {
 		super();
 		this.subtotal = subtotal;
 		this.total = total;
@@ -44,13 +50,13 @@ public class Cart implements java.io.Serializable {
 	}
 	
 	
-	public Cart(String currency, List<CartItem> cartItems) {
+	public Cart(String currency, Set<CartItem> cartItems) {
 		super();
 		this.currency = currency;
 		this.cartItems = cartItems;
 	}
 
-	
+	@Column(name = "id_cart", nullable = false)
 	public Long getIdCart() {
 		return this.idCart;
 	}
@@ -99,39 +105,48 @@ public class Cart implements java.io.Serializable {
 		this.subtotal = subtotal;
 	}
 
-	public List<CartItem> getCartItems() {
+	public Set<CartItem> getCartItems() {
 		return this.cartItems;
 	}
 
-	public void setCartItems(List<CartItem> cartItems) {
+	public void setCartItems(Set<CartItem> cartItems) {
 		this.cartItems = cartItems;
 	}
 	
 	
 	/**
-	 *  Do all fresh Calcualtion when quantity changes or New CartItem added
+	 *  Do all fresh calculation when quantity changes or New CartItem added
 	 */
 	public void reCalculateCart() {
 		calculateSubTotal();
 		calculatePostAndTax();
 		calculateTotal();
+		
+		//get latest rate, webservice call 
+		BigDecimal gbpRate  = new BigDecimal(ExchangeUtil.getCurrentRate("GBP"));
+		
+		//last step : convert to Euro
+		setSubtotal(ExchangeUtil.convertGBPtoEuro(gbpRate, getSubtotal()));
+		setPostAndTax(ExchangeUtil.convertGBPtoEuro(gbpRate, getPostAndTax()));
+		setTotal(ExchangeUtil.convertGBPtoEuro(gbpRate, getTotal()));
+		
 	}
 	
 	/**
 	 * Sum of SubTotal + PostAndTax
 	 * @return
 	 */
-	private BigDecimal calculateTotal(){
-		 BigDecimal total = getSubtotal().add(getPostAndTax());
-		 setTotal(total);
-		return total;
+	private void calculateTotal(){
+		MathContext mc = new MathContext(5);
+		BigDecimal total = getSubtotal().add(getPostAndTax(),mc);
+		setTotal(total);
 	}
 	
 	/**
 	 * Sum of subtotal of all CartItems 
 	 * @return
 	 */
-	private BigDecimal calculateSubTotal(){
+	private void calculateSubTotal(){
 		
 		BigDecimal subTotal = this.getCartItems()
 				 .stream()
@@ -139,19 +154,18 @@ public class Cart implements java.io.Serializable {
 			     .reduce(BigDecimal.ZERO, BigDecimal::add);
 		
 		setSubtotal(subTotal);
-		return subTotal;
+		
 	}
 	
 	/**
 	 * 10% of SubTotal
 	 * @return
 	 */
-	private BigDecimal calculatePostAndTax(){
+	private void calculatePostAndTax(){
 		BigDecimal postAndTax = (getSubtotal()
 				.multiply(new BigDecimal(10))
 				.divide(new BigDecimal(100)));		
 		setPostAndTax(postAndTax);
-		return postAndTax;
 	}
 	
 	

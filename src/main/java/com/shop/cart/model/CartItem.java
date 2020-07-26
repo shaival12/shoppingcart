@@ -15,27 +15,29 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  */
 
 @Entity
-@Table(name = "cart_item")
+@Table(name = "cartItems")
 public class CartItem implements java.io.Serializable {
 
+	@Id
+	@GeneratedValue(strategy = IDENTITY)
 	private Long idCartItem;
 	private String sku;
 	private Integer quantity;
 	private String currency;
 	private BigDecimal subTotal;
 	
-	@ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "idCart")
-	private Cart cart;
+	//@ManyToOne(fetch = FetchType.LAZY, optional = false)
+    //@JoinColumn(name = "id_cart", nullable = false)
+	private Long cart;
 
 	public CartItem() {
 	}
 	
 
-	public CartItem(String sku, Cart cart, Integer quantity, String currency, BigDecimal subTotal) {
+	public CartItem(Long cart, String sku, Integer quantity, String currency, BigDecimal subTotal) {
 		super();
-		this.sku = sku;
 		this.cart = cart;
+		this.sku = sku;
 		this.quantity = quantity;
 		this.currency = currency;
 		this.subTotal = subTotal;
@@ -91,13 +93,13 @@ public class CartItem implements java.io.Serializable {
 		this.subTotal = subTotal;
 	}
 
-	@JsonIgnore
-	public Cart getCart() {
+    @JsonIgnore
+	public Long getCart() {
 		return cart;
 	}
 
 
-	public void setCart(Cart cart) {
+	public void setCart(Long cart) {
 		this.cart = cart;
 	}
 

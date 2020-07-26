@@ -2,11 +2,15 @@ package com.shop.cart.task;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import com.shop.cart.service.CartService;
+
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.concurrent.TimeUnit;
@@ -18,9 +22,14 @@ import java.util.concurrent.TimeUnit;
  */
 @Component
 public class ScheduledTasks {
+	
+	@Autowired
+	CartService cartService;
+	
     private static final Logger logger = LoggerFactory.getLogger(ScheduledTasks.class);
     private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
 
+    
 
     public void scheduleTaskWithFixedDelay() {}
 
@@ -33,7 +42,7 @@ public class ScheduledTasks {
         logger.info("Update the currency :: Execution Time - {}", dateTimeFormatter.format(LocalDateTime.now()) );
        
         //code to request latest quote from Exchange and update
-        ExchangeUtil.getCurrentRate("GBP");
+        cartService.updateCarts();
         
     }
 
