@@ -4,7 +4,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.concurrent.TimeUnit;
@@ -30,10 +32,10 @@ public class ScheduledTasks {
     public void scheduleTaskWithFixedRate() {
         logger.info("Update the currency :: Execution Time - {}", dateTimeFormatter.format(LocalDateTime.now()) );
        
-        //code to request latest quote from 
+        //code to request latest quote from Exchange and update
+        ExchangeUtil.getCurrentRate();
         
-        
-        //Implement code for converting currency
-       
     }
+
+	
 }

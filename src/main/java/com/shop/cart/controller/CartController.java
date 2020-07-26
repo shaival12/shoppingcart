@@ -42,10 +42,13 @@ public class CartController {
     		         @PathVariable Long productid, 
     		         @PathVariable(required = false) Integer quantity) {
 		
+		//validate quantity
+		if(quantity<0) {
+			return new ResponseEntity(HttpStatus.BAD_REQUEST);
+		}
 		if(quantity==null) {
 			quantity = 1;
 		}
-		
 		
 		Cart cart = null;
 		if(cartService.findById(cartid).isPresent()) {
@@ -70,6 +73,14 @@ public class CartController {
     public @ResponseBody ResponseEntity<Cart> removeCartItem(@PathVariable Long cartid,
 	              @PathVariable Long productid, 
 	              @PathVariable(required = false) Integer quantity) {
+		
+		//validate quantity
+		if(quantity<0) {
+			return new ResponseEntity(HttpStatus.BAD_REQUEST);
+		}
+		if(quantity==null) {
+			quantity = 1;
+		}
 		
 		Cart cart = cartService.findById(cartid).get();
 		if(cart != null) {

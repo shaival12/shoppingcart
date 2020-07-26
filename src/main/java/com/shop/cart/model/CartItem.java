@@ -32,9 +32,10 @@ public class CartItem implements java.io.Serializable {
 	}
 	
 
-	public CartItem(String sku, Integer quantity, String currency, BigDecimal subTotal) {
+	public CartItem(String sku, Cart cart, Integer quantity, String currency, BigDecimal subTotal) {
 		super();
 		this.sku = sku;
+		this.cart = cart;
 		this.quantity = quantity;
 		this.currency = currency;
 		this.subTotal = subTotal;

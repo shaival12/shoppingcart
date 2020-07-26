@@ -86,7 +86,7 @@ public class CartService {
 
 	private void addNewProductToCart(Integer quantity, Cart cart, Product product) {
 		
-		CartItem entity = new CartItem(product.getSku(),
+		CartItem entity = new CartItem(product.getSku(),cart,
 				quantity,
 				EUR_CURRENCY,
 				calculateCartItemSubTotal(quantity, product));
